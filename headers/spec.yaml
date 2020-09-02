@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  title: transaction
+  version: '1.0'
+  contact:
+    name: Works Of Barry
+    url: worksofbarry.com
+servers:
+  - description: ILEusion
+paths: {}
+components:
+  schemas:
+    call:
+      title: call
+      type: object
+      properties:
+        action:
+          type: string
+          default: /call
+        library:
+          type: string
+        object:
+          type: string
+        function:
+          type: string
+          description: Only needed if calling a exported procedure inside a service program.
+        result:
+          $ref: '#/components/schemas/variable'
+        args:
+          type: array
+          items:
+            $ref: '#/components/schemas/variable'
+      required:
+        - action
+        - library
+        - object
+      x-examples:
+        example-1:
+          action: /call
+          object: FAK100
+          library: BARRY
+          args:
+            - value: Text here
+              type: char
+              length: 20
+            - value: 11
+              type: int
+              length: 10
+            - value: 10
+              type: int
+              length: 10
+            - value: 0
+              type: int
+              length: 10
+        example-2:
+          action: /call
+          object: FAK101
+          library: BARRY
+          args:
+            - value: John
+              type: char
+              length: 20
+            - values:
+                - 3
+                - 666
+                - 5
+              type: int
+              length: 10
+        example-3:
+          action: /call
+          library: ILEUSION
+          object: DS1
+          args:
+            - type: struct
+              value:
+                - type: char
+                  length: 20
+                  value: Hello
+                - type: int
+                  length: 3
+                  value: 11
+                - type: packed
+                  length: 11
+                  precision: 2
+                  value: 12.34
+    variable:
+      title: variable
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - int
+            - uns
+            - float
+            - char
+            - bool
+            - ind
+            - zoned
+            - struct
+        length:
+          description: should match length of type defined in the calling application (uses RPG sizes)
+          type: number
+        value:
+          type:
+            - string
+            - number
+            - boolean
+          description: Can also be variable (ref) type
+        values:
+          type: array
+          description: Used if calling parameter is an array. Not to be used at the same time as the value attribute
+          items:
+            type:
+              - number
+              - string
+              - boolean
+        arraysize:
+          description: 'number, size of array being returned (optional, only needed if functions returns an array)'
+          type: number
+      required:
+        - type
+    dq_send:
+      title: dq_send
+      type: object
+      properties:
+        action:
+          type: string
+          default: /dq/send
+        library:
+          type: string
+        object:
+          type: string
+        data:
+          type: string
+      required:
+        - action
+        - library
+        - object
+        - data
+      x-examples:
+        example-1:
+          action: /dq_send
+          library: BARRY
+          object: TESTDQ
+          data: 'Hello world!'
+    dq_pop:
+      title: dq_pop
+      type: object
+      properties:
+        action:
+          type: string
+        library:
+          type: string
+        object:
+          type: string
+      x-examples:
+        example-1:
+          action: /dq/pop
+          library: BARRY
+          object: TESTDQ
+    cl:
+      title: cl
+      type: object
+      properties:
+        action:
+          type: string
+          default: /cl
+        command:
+          type: string
+      x-examples:
+        example-1:
+          action: /cl
+          command: ADDLIBLE SYSTOOLS
