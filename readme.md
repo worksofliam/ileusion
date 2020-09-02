@@ -15,7 +15,7 @@ select ileusion.ILEUSION_CALL(cast('[{"action":"/dq/send","library":"ILEUSION","
 select ileusion.ILEUSION_CALL(cast('[{"action":"/call","library":"ILEUSION","object":"DS1","args":[{"type":"struct","value":[{"type":"char","length":20,"value":"Liam"},{"type":"int","length":3,"value":11},{"type":"packed","length":11,"precision":2,"value":12.34}]}]}]' as char(1024))) from sysibm.sysdummy1;
 ```
 
-[JSON schemas here](https://sitemule.github.io/ileusion/api) (outdated, new one in progress).
+See the `headers` folder for the OpenAPI spec each different API call available.
 
 ILEusion uses Sitemule's [excellent noxDB library](https://github.com/sitemule/noxDB) as the JSON parser.
 
