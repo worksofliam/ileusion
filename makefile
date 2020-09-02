@@ -38,9 +38,16 @@ ileusion_s.srvpgm: ileusion_s.rpgle actions.rpgle data.rpgle callfunc.rpgle type
 tests: $(TESTS)
 	-system -s "CRTDTAQ DTAQ(ILEUSION/TESTDQ) MAXLEN(100)"
 	@echo "Tests built!"
+
 %.test:
 	system -s "CHGATR OBJ('./tests/$*.rpgle') ATR(*CCSID) VALUE(1252)"
 	system -s "CRTBNDRPG PGM($(BIN_LIB)/$*) SRCSTMF('./tests/$*.rpgle') DBGVIEW($(DBGVIEW)) REPLACE(*YES)"
+
+testcalls:
+	db2util "select ileusion.ILEUSION_CALL(cast('[{\"action\": \"/call\", \"object\":\"FAK100\",\"library\":\"ILEUSION\",\"args\":[{\"value\":\"John\",\"type\":\"char\",\"length\":20},{\"value\":11,\"type\":\"int\",\"length\":10},{\"value\":8,\"type\":\"int\",\"length\":10},{\"value\":0,\"type\":\"int\",\"length\":10}]}]' as char(1024))) from sysibm.sysdummy1;"
+	db2util "select ileusion.ILEUSION_CALL(cast('[{\"action\": \"/call\", \"object\":\"FAK101\",\"library\":\"ILEUSION\",\"args\":[{\"value\":\"Dave\",\"type\":\"char\",\"length\":20},{\"values\":[3,3,5],\"type\":\"int\",\"length\":10}]}]' as char(1024))) from sysibm.sysdummy1;"
+	db2util "select ileusion.ILEUSION_CALL(cast('[{\"action\":\"/dq/send\",\"library\":\"ILEUSION\",\"object\":\"TESTDQ\",\"data\":\"Hello world\"},{\"action\":\"/dq/pop\",\"library\":\"ILEUSION\",\"object\":\"TESTDQ\",\"length\":20}]' as char(1024))) from sysibm.sysdummy1;"
+	db2util "select ileusion.ILEUSION_CALL(cast('[{\"action\":\"/call\",\"library\":\"ILEUSION\",\"object\":\"DS1\",\"args\":[{\"type\":\"struct\",\"value\":[{\"type\":\"char\",\"length\":20,\"value\":\"Liam\"},{\"type\":\"int\",\"length\":3,\"value\":11},{\"type\":\"packed\",\"length\":11,\"precision\":2,\"value\":12.34}]}]}]' as char(1024))) from sysibm.sysdummy1;"
 
 clean:
 	-system -s "DLTOBJ OBJ($(BIN_LIB)/*ALL) OBJTYPE(*FILE)"
